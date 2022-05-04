@@ -56,8 +56,9 @@ $credObject = New-Object -TypeName System.Management.Automation.PSCredential -Ar
 #Another alternative to store/retrieve credentials in the Automation Account.  
 #$credObject = Get-AutomationPSCredential -Name "<CredentialName>"
 
+$emailTo = @('user1@domain.com', 'user2@domain.com', 'user3@domain.com')
 Send-MailMessage -Credential $credObject -SmtpServer smtp.office365.com -Port 587 `
--To "<destinationemail@domain.com>" `
+-To $emailTo `
 -Subject "<Some Descriptive subject as String>" `
 -Body $HtmlTable1 `
 -From '$ASUserDomain or $credObect.UserName' `
