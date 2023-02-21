@@ -22,6 +22,7 @@ $HtmlTable1 = "<table border='1' align='Left' cellpadding='2' cellspacing='0' st
 
 $actualDate = Get-Date
 $apps = Get-AzADApplication
+$appscounter = 0
 foreach ($app in $apps)
 {
     $appCreds = Get-AzADAppCredential -ObjectId $app.ObjectId
@@ -40,12 +41,14 @@ foreach ($app in $apps)
                 <td>" + $diffDate.Days + "</td>
                 <td>" + $appCred.Type + "</td>
                 <td>" + $appCred.EndDate + "</td>
-                </tr>"                
+                </tr>" 
+                $appscounter ++               
             }             
         }        
     }    
 }
 $HtmlTable1 += "</table>"
+
 
 
 #Credentials for sending email with user password stored as secret in Key Vault.
@@ -57,10 +60,13 @@ $credObject = New-Object -TypeName System.Management.Automation.PSCredential -Ar
 #$credObject = Get-AutomationPSCredential -Name "<CredentialName>"
 
 $emailTo = @('user1@domain.com', 'user2@domain.com', 'user3@domain.com')
-Send-MailMessage -Credential $credObject -SmtpServer smtp.office365.com -Port 587 `
--To $emailTo `
--Subject "<Some Descriptive subject as String>" `
--Body $HtmlTable1 `
--From '$ASUserDomain or $credObect.UserName' `
--BodyAsHtml `
--UseSsl
+if ($appscounter -gt 0)
+ {
+    Send-MailMessage -Credential $credObject -SmtpServer smtp.office365.com -Port 587 `
+    -To $emailTo `
+    -Subject "<Some Descriptive subject as String>" `
+    -Body $HtmlTable1 `
+    -From '$ASUserDomain or $credObect.UserName' `
+    -BodyAsHtml `
+    -UseSsl
+ }
